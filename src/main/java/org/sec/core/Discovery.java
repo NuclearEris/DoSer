@@ -8,13 +8,16 @@ import org.sec.model.ClassReference;
 import org.sec.model.MethodReference;
 
 import java.util.List;
+import java.util.Map;
 
 public class Discovery {
     private static final Logger logger = LogManager.getLogger(Discovery.class);
 
     public static void start(List<ClassFile> classFileList,
                              List<ClassReference> discoveredClasses,
-                             List<MethodReference> discoveredMethods) {
+                             List<MethodReference> discoveredMethods,
+                             Map<ClassReference.Handle, ClassReference> classMap,
+                             Map<MethodReference.Handle, MethodReference> methodMap) {
         logger.info("start discovery information");
         for (ClassFile file : classFileList) {
             try {
@@ -24,6 +27,12 @@ public class Discovery {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        for (ClassReference clazz : discoveredClasses) {
+            classMap.put(clazz.getHandle(), clazz);
+        }
+        for (MethodReference method : discoveredMethods) {
+            methodMap.put(method.getHandle(), method);
         }
     }
 }
