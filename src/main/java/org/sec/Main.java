@@ -39,7 +39,5 @@ public class Main {
         boolean debug = command.debug;
         List<ClassFile> classFileList = RtUtil.getAllClassesFromJars(jars);
         Discovery.start(classFileList,discoveredClasses,discoveredMethods);
-        System.out.println(discoveredClasses.size());
-        System.out.println(discoveredMethods.size());
     }
 }
