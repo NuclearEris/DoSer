@@ -5,6 +5,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.sec.core.Discovery;
 import org.sec.core.DoSFinder;
+import org.sec.core.Output;
 import org.sec.model.ClassFile;
 import org.sec.model.ClassReference;
 import org.sec.model.DoSResult;
@@ -52,6 +53,8 @@ public class Main {
         Discovery.start(classFileList, discoveredClasses, discoveredMethods, classMap, methodMap);
         logger.info("total classes: " + discoveredClasses.size());
         logger.info("total methods: " + discoveredMethods.size());
-        DoSFinder.start(classFileList, classMap,methodMap, patternDoSResults);
+        DoSFinder.start(classFileList, classMap, methodMap,
+                patternDoSResults, forDoSResults, arrayDoSResults, mapDoSResults, listDoSResults);
+        Output.start(patternDoSResults, forDoSResults, arrayDoSResults, mapDoSResults, listDoSResults);
     }
 }

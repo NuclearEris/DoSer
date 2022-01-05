@@ -17,16 +17,32 @@ public class DoSFinder {
     public static void start(List<ClassFile> classFileList,
                              Map<ClassReference.Handle, ClassReference> classMap,
                              Map<MethodReference.Handle, MethodReference> methodMap,
-                             List<DoSResult> patternDoSResults) {
+                             List<DoSResult> patternDoSResults,
+                             List<DoSResult> forDoSResults,
+                             List<DoSResult> arrayDoSResults,
+                             List<DoSResult> listDoSResults,
+                             List<DoSResult> mapDoSResults) {
         logger.info("start pattern dos analysis");
         for (ClassFile file : classFileList) {
             try {
-                PatternDoSClassVisitor dcv = new PatternDoSClassVisitor(classMap,methodMap, patternDoSResults);
+                PatternDoSClassVisitor pcv = new PatternDoSClassVisitor(classMap, methodMap, patternDoSResults);
                 ClassReader cr = new ClassReader(file.getFile());
-                cr.accept(dcv, ClassReader.EXPAND_FRAMES);
+                cr.accept(pcv, ClassReader.EXPAND_FRAMES);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        logger.info("pattern dos analysis finish");
+        logger.info("start for dos analysis");
+        for (ClassFile file : classFileList) {
+            try {
+                ForDoSClassVisitor fcv = new ForDoSClassVisitor(classMap, methodMap, forDoSResults);
+                ClassReader cr = new ClassReader(file.getFile());
+                cr.accept(fcv, ClassReader.EXPAND_FRAMES);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        logger.info("for dos analysis finish");
     }
 }
