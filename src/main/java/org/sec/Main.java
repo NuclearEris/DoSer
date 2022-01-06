@@ -40,6 +40,9 @@ public class Main {
             jc.usage();
         }
         if (command.jars != null && command.jars.size() != 0) {
+            if (command.isDebug) {
+                Command.debug = true;
+            }
             start(command);
         } else {
             logger.error("no jars input");
