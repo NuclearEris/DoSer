@@ -46,6 +46,22 @@ public class Output {
             }
             Files.write(Paths.get("for.txt"),
                     forBuilder.toString().getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder arrayBuilder = new StringBuilder();
+            index = 1;
+            for (DoSResult doSResult : arrayDoSResults) {
+                arrayBuilder.append(index);
+                arrayBuilder.append("-");
+                arrayBuilder.append(doSResult.getClassReference().getName());
+                arrayBuilder.append(".");
+                arrayBuilder.append(doSResult.getMethodReference().getName());
+                arrayBuilder.append("->");
+                arrayBuilder.append(doSResult.getType());
+                arrayBuilder.append("\n");
+                index++;
+            }
+            Files.write(Paths.get("array.txt"),
+                    arrayBuilder.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }

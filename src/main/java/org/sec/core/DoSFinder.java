@@ -44,5 +44,16 @@ public class DoSFinder {
             }
         }
         logger.info("for dos analysis finish");
+        logger.info("start array dos analysis");
+        for (ClassFile file : classFileList) {
+            try {
+                ArrayDoSClassVisitor acv = new ArrayDoSClassVisitor(classMap, methodMap, arrayDoSResults);
+                ClassReader cr = new ClassReader(file.getFile());
+                cr.accept(acv, ClassReader.EXPAND_FRAMES);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        logger.info("array dos analysis finish");
     }
 }
