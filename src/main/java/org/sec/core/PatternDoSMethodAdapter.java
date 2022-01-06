@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.sec.Command;
 import org.sec.jvm.CoreMethodAdapter;
 import org.sec.model.ClassReference;
 import org.sec.model.DoSResult;
@@ -64,7 +65,9 @@ public class PatternDoSMethodAdapter extends CoreMethodAdapter<String> {
         if (patternMatches) {
             if (operandStack.get(0).contains("source") &&
                     operandStack.get(1).contains("source")) {
-                logger.info("find pattern dos: " + this.owner + "." + this.name);
+                if (Command.debug) {
+                    logger.info("find pattern dos: " + this.owner + "." + this.name);
+                }
                 patternDoSResults.add(new DoSResult(
                         this.classReference, this.methodReference, DoSResult.PATTERN_TYPE));
                 super.visitMethodInsn(opcode, owner, name, desc, itf);

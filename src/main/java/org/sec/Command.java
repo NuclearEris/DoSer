@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Command {
     @Parameter(names = {"-h", "--help"}, description = "Help Info", help = true)
-    public boolean help;
+    public static boolean help;
 
     @Parameter(names = {"-j", "--jar"}, description = "Scan Jar File")
-    public List<String> jars;
+    public static List<String> jars;
 
     @Parameter(names = {"--debug"}, description = "Debug")
-    public boolean debug;
+    public static boolean debug;
 }

@@ -32,6 +32,7 @@ public class DoSFinder {
                 e.printStackTrace();
             }
         }
+        logger.info("find pattern dos: " + patternDoSResults.size());
         logger.info("pattern dos analysis finish");
         logger.info("start for dos analysis");
         for (ClassFile file : classFileList) {
@@ -43,6 +44,7 @@ public class DoSFinder {
                 e.printStackTrace();
             }
         }
+        logger.info("find for dos: " + forDoSResults.size());
         logger.info("for dos analysis finish");
         logger.info("start array dos analysis");
         for (ClassFile file : classFileList) {
@@ -54,6 +56,19 @@ public class DoSFinder {
                 e.printStackTrace();
             }
         }
+        logger.info("find array dos: " + arrayDoSResults.size());
         logger.info("array dos analysis finish");
+        logger.info("start list dos analysis");
+        for (ClassFile file : classFileList) {
+            try {
+                ListDoSClassVisitor lcv = new ListDoSClassVisitor(classMap, methodMap, listDoSResults);
+                ClassReader cr = new ClassReader(file.getFile());
+                cr.accept(lcv, ClassReader.EXPAND_FRAMES);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        logger.info("find list dos: " + listDoSResults.size());
+        logger.info("list dos analysis finish");
     }
 }

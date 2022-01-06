@@ -6,6 +6,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.sec.Command;
 import org.sec.jvm.CoreMethodAdapter;
 import org.sec.model.ClassReference;
 import org.sec.model.DoSResult;
@@ -70,7 +71,9 @@ public class ForDoSMethodAdapter extends CoreMethodAdapter<String> {
         if (opcode == Opcodes.GOTO) {
             if (labelList.contains(label)) {
                 if (this.flag) {
-                    logger.info("find for dos: " + this.owner + "." + this.name);
+                    if (Command.debug) {
+                        logger.info("find for dos: " + this.owner + "." + this.name);
+                    }
                     forDoSResults.add(new DoSResult(
                             this.classReference, this.methodReference, DoSResult.FOR_TYPE));
                     this.flag = false;

@@ -62,6 +62,22 @@ public class Output {
             }
             Files.write(Paths.get("array.txt"),
                     arrayBuilder.toString().getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder listBuilder = new StringBuilder();
+            index = 1;
+            for (DoSResult doSResult : listDoSResults) {
+                listBuilder.append(index);
+                listBuilder.append("-");
+                listBuilder.append(doSResult.getClassReference().getName());
+                listBuilder.append(".");
+                listBuilder.append(doSResult.getMethodReference().getName());
+                listBuilder.append("->");
+                listBuilder.append(doSResult.getType());
+                listBuilder.append("\n");
+                index++;
+            }
+            Files.write(Paths.get("list.txt"),
+                    listBuilder.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }

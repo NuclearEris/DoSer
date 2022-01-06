@@ -465,7 +465,7 @@ public class CoreMethodAdapter<T> extends MethodVisitor {
         switch (opcode) {
             case Opcodes.ILOAD:
             case Opcodes.FLOAD:
-                operandStack.push();
+                operandStack.push(localVariables.get(var));
                 break;
             case Opcodes.LLOAD:
             case Opcodes.DLOAD:

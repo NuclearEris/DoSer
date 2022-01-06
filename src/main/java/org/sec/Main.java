@@ -48,13 +48,13 @@ public class Main {
 
     private static void start(Command command) {
         List<String> jars = command.jars;
-        boolean debug = command.debug;
         List<ClassFile> classFileList = RtUtil.getAllClassesFromJars(jars);
         Discovery.start(classFileList, discoveredClasses, discoveredMethods, classMap, methodMap);
         logger.info("total classes: " + discoveredClasses.size());
         logger.info("total methods: " + discoveredMethods.size());
         DoSFinder.start(classFileList, classMap, methodMap,
-                patternDoSResults, forDoSResults, arrayDoSResults, mapDoSResults, listDoSResults);
+                patternDoSResults, forDoSResults, arrayDoSResults, listDoSResults, mapDoSResults);
         Output.start(patternDoSResults, forDoSResults, arrayDoSResults, mapDoSResults, listDoSResults);
+        logger.info("delete temp files...");
     }
 }
