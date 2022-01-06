@@ -8,7 +8,6 @@ import org.sec.model.ClassReference;
 import org.sec.model.DoSResult;
 import org.sec.model.MethodReference;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +40,7 @@ public class PatternDoSClassVisitor extends ClassVisitor {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
         PatternDoSMethodAdapter patternDoSMethodVisitor = new PatternDoSMethodAdapter(
                 api, mv, this.name, access, name, desc, signature, exceptions,
-                classMap, methodMap,patternDoSResults);
+                classMap, methodMap, patternDoSResults);
         return new JSRInlinerAdapter(patternDoSMethodVisitor, access, name, desc, signature, exceptions);
     }
 }

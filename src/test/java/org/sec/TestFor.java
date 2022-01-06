@@ -23,6 +23,9 @@ public class TestFor {
         for (int i = 0; i < data; i++) {
             System.out.println("test");
         }
+        if (data < 10) {
+            System.out.println("test");
+        }
     }
 
     private static void testForObj(Obj obj) {

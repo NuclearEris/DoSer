@@ -13,11 +13,11 @@ public class LocalVariables<T> {
         this.array = new ArrayList<>();
     }
 
-    public void clear(){
+    public void clear() {
         this.array.clear();
     }
 
-    public void add(Set<T> t){
+    public void add(Set<T> t) {
         this.array.add(t);
     }
 
@@ -35,14 +35,15 @@ public class LocalVariables<T> {
         return array.get(index);
     }
 
-    public int size(){
+    public int size() {
         return this.array.size();
     }
 
-    public void remove(int index){
+    public void remove(int index) {
         this.array.remove(index);
     }
-    public List<Set<T>> getList(){
+
+    public List<Set<T>> getList() {
         return this.array;
     }
 }

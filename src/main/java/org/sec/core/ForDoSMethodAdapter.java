@@ -11,6 +11,7 @@ import org.sec.model.ClassReference;
 import org.sec.model.DoSResult;
 import org.sec.model.MethodReference;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +26,8 @@ public class ForDoSMethodAdapter extends CoreMethodAdapter<String> {
     private final int access;
     private final String name;
     private final String desc;
+    private final List<Label> labelList = new ArrayList<>();
+    private boolean flag;
 
     public ForDoSMethodAdapter(int api, MethodVisitor mv, String owner, int access,
                                String name, String desc, String signature, String[] exceptions,
@@ -57,18 +60,31 @@ public class ForDoSMethodAdapter extends CoreMethodAdapter<String> {
     }
 
     @Override
+    public void visitLabel(Label label) {
+        this.labelList.add(label);
+        super.visitLabel(label);
+    }
+
+    @Override
     public void visitJumpInsn(int opcode, Label label) {
+        if (opcode == Opcodes.GOTO) {
+            if (labelList.contains(label)) {
+                if (this.flag) {
+                    logger.info("find for dos: " + this.owner + "." + this.name);
+                    forDoSResults.add(new DoSResult(
+                            this.classReference, this.methodReference, DoSResult.FOR_TYPE));
+                    this.flag = false;
+                }
+            }
+        }
         if (opcode == Opcodes.IF_ICMPGE) {
-            if (localVariables.get(0).contains("source")) {
-                logger.info("find for dos: " + this.owner + "." + this.name);
-                forDoSResults.add(new DoSResult(
-                        this.classReference, this.methodReference, DoSResult.FOR_TYPE));
-                super.visitJumpInsn(opcode, label);
-                return;
+            if (operandStack.get(0).contains("source")) {
+                this.flag = true;
             }
         }
         super.visitJumpInsn(opcode, label);
     }
+
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
