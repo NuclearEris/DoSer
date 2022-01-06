@@ -70,5 +70,17 @@ public class DoSFinder {
         }
         logger.info("find list dos: " + listDoSResults.size());
         logger.info("list dos analysis finish");
+        logger.info("start map dos analysis");
+        for (ClassFile file : classFileList) {
+            try {
+                MapDoSClassVisitor mcv = new MapDoSClassVisitor(classMap, methodMap, mapDoSResults);
+                ClassReader cr = new ClassReader(file.getFile());
+                cr.accept(mcv, ClassReader.EXPAND_FRAMES);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        logger.info("find map dos: " + mapDoSResults.size());
+        logger.info("map dos analysis finish");
     }
 }
