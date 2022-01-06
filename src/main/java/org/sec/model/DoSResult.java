@@ -1,5 +1,7 @@
 package org.sec.model;
 
+import java.util.Objects;
+
 public class DoSResult {
     private final ClassReference classReference;
     private final MethodReference methodReference;
@@ -45,5 +47,24 @@ public class DoSResult {
             return "Map DoS";
         }
         return "null";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DoSResult doSResult = (DoSResult) o;
+        return Objects.equals(classReference, doSResult.classReference)
+                && Objects.equals(methodReference, doSResult.methodReference)
+                && Objects.equals(type, doSResult.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(classReference, methodReference, type);
     }
 }

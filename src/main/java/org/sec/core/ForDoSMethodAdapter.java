@@ -15,8 +15,8 @@ import org.sec.model.MethodReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
+@SuppressWarnings("all")
 public class ForDoSMethodAdapter extends CoreMethodAdapter<String> {
     private static final Logger logger = LogManager.getLogger(ForDoSMethodAdapter.class);
 
@@ -91,19 +91,23 @@ public class ForDoSMethodAdapter extends CoreMethodAdapter<String> {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (hasReturn(desc) && opcode == Opcodes.INVOKEVIRTUAL) {
-            super.visitMethodInsn(opcode, owner, name, desc, itf);
-            operandStack.set(0, "source");
-            return;
+        Type[] argTypes = Type.getArgumentTypes(desc);
+        if (opcode != Opcodes.INVOKESTATIC) {
+            Type[] extendedArgTypes = new Type[argTypes.length + 1];
+            System.arraycopy(argTypes, 0, extendedArgTypes, 1, argTypes.length);
+            extendedArgTypes[0] = Type.getObjectType(owner);
+            argTypes = extendedArgTypes;
+        }
+        for (int i = 0; i < argTypes.length; i++) {
+            if (operandStack.get(i).contains("source")) {
+                Type returnType = Type.getReturnType(desc);
+                if (returnType.getSort() != Type.VOID) {
+                    super.visitMethodInsn(opcode, owner, name, desc, itf);
+                    operandStack.set(0, "source");
+                    return;
+                }
+            }
         }
         super.visitMethodInsn(opcode, owner, name, desc, itf);
-    }
-
-    private static boolean hasReturn(String desc) {
-        String[] temp = desc.trim().split("\\)");
-        if (temp.length > 1) {
-            return !Objects.equals(temp[1], "V");
-        }
-        return false;
     }
 }

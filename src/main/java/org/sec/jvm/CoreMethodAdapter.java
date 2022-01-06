@@ -477,8 +477,7 @@ public class CoreMethodAdapter<T> extends MethodVisitor {
                 break;
             case Opcodes.ISTORE:
             case Opcodes.FSTORE:
-                operandStack.pop();
-                localVariables.set(var, new HashSet<>());
+                localVariables.set(var, operandStack.pop());
                 break;
             case Opcodes.DSTORE:
             case Opcodes.LSTORE:

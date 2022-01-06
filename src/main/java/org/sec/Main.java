@@ -1,6 +1,7 @@
 package org.sec;
 
 import com.beust.jcommander.JCommander;
+import com.sun.deploy.security.CredentialInfo;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.sec.core.Discovery;
@@ -12,10 +13,8 @@ import org.sec.model.DoSResult;
 import org.sec.model.MethodReference;
 import org.sec.util.RtUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.zone.ZoneRules;
+import java.util.*;
 
 
 public class Main {
@@ -23,11 +22,11 @@ public class Main {
     private static final List<MethodReference> discoveredMethods = new ArrayList<>();
     private static final Map<ClassReference.Handle, ClassReference> classMap = new HashMap<>();
     private static final Map<MethodReference.Handle, MethodReference> methodMap = new HashMap<>();
-    private static final List<DoSResult> arrayDoSResults = new ArrayList<>();
-    private static final List<DoSResult> forDoSResults = new ArrayList<>();
-    private static final List<DoSResult> patternDoSResults = new ArrayList<>();
-    private static final List<DoSResult> mapDoSResults = new ArrayList<>();
-    private static final List<DoSResult> listDoSResults = new ArrayList<>();
+    private static List<DoSResult> arrayDoSResults = new ArrayList<>();
+    private static List<DoSResult> forDoSResults = new ArrayList<>();
+    private static List<DoSResult> patternDoSResults = new ArrayList<>();
+    private static List<DoSResult> mapDoSResults = new ArrayList<>();
+    private static List<DoSResult> listDoSResults = new ArrayList<>();
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
@@ -57,7 +56,17 @@ public class Main {
         logger.info("total methods: " + discoveredMethods.size());
         DoSFinder.start(classFileList, classMap, methodMap,
                 patternDoSResults, forDoSResults, arrayDoSResults, listDoSResults, mapDoSResults);
+        patternDoSResults = unique(patternDoSResults);
+        forDoSResults = unique(forDoSResults);
+        arrayDoSResults = unique(arrayDoSResults);
+        listDoSResults = unique(listDoSResults);
+        mapDoSResults = unique(mapDoSResults);
         Output.start(patternDoSResults, forDoSResults, arrayDoSResults, mapDoSResults, listDoSResults);
         logger.info("delete temp files...");
+    }
+
+    private static List<DoSResult> unique(List<DoSResult> data) {
+        Set<DoSResult> temp = new HashSet<>(data);
+        return new ArrayList<>(temp);
     }
 }
