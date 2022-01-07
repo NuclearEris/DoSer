@@ -13,7 +13,8 @@ public class Output {
                              List<DoSResult> forDoSResults,
                              List<DoSResult> arrayDoSResults,
                              List<DoSResult> mapDoSResults,
-                             List<DoSResult> listDoSResults) {
+                             List<DoSResult> listDoSResults,
+                             List<DoSResult> readExternalResults) {
         try {
             StringBuilder patternBuilder = new StringBuilder();
             int index = 1;
@@ -94,6 +95,22 @@ public class Output {
             }
             Files.write(Paths.get("map.txt"),
                     mapBuilder.toString().getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder readBuilder = new StringBuilder();
+            index = 1;
+            for (DoSResult doSResult : readExternalResults) {
+                readBuilder.append(index);
+                readBuilder.append("-");
+                readBuilder.append(doSResult.getClassReference().getName());
+                readBuilder.append(".");
+                readBuilder.append(doSResult.getMethodReference().getName());
+                readBuilder.append("->");
+                readBuilder.append(doSResult.getType());
+                readBuilder.append("\n");
+                index++;
+            }
+            Files.write(Paths.get("readExternal.txt"),
+                    readBuilder.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }

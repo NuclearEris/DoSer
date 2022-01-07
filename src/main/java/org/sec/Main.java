@@ -1,7 +1,6 @@
 package org.sec;
 
 import com.beust.jcommander.JCommander;
-import com.sun.deploy.security.CredentialInfo;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.sec.core.Discovery;
@@ -13,7 +12,6 @@ import org.sec.model.DoSResult;
 import org.sec.model.MethodReference;
 import org.sec.util.RtUtil;
 
-import java.time.zone.ZoneRules;
 import java.util.*;
 
 
@@ -27,6 +25,7 @@ public class Main {
     private static List<DoSResult> patternDoSResults = new ArrayList<>();
     private static List<DoSResult> mapDoSResults = new ArrayList<>();
     private static List<DoSResult> listDoSResults = new ArrayList<>();
+    private static List<DoSResult> readExternalResults = new ArrayList<>();
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
@@ -61,12 +60,41 @@ public class Main {
         arrayDoSResults = unique(arrayDoSResults);
         listDoSResults = unique(listDoSResults);
         mapDoSResults = unique(mapDoSResults);
-        Output.start(patternDoSResults, forDoSResults, arrayDoSResults, mapDoSResults, listDoSResults);
+        logger.info("analysis data...");
+        addReadExternalResults();
+        Output.start(patternDoSResults, forDoSResults, arrayDoSResults,
+                mapDoSResults, listDoSResults, readExternalResults);
         logger.info("delete temp files...");
     }
 
     private static List<DoSResult> unique(List<DoSResult> data) {
         Set<DoSResult> temp = new HashSet<>(data);
         return new ArrayList<>(temp);
+    }
+
+    private static void addReadExternalResults() {
+        Set<DoSResult> temp = new HashSet<>();
+        for (DoSResult doSResult : arrayDoSResults) {
+            addSet(temp, doSResult);
+        }
+        for (DoSResult doSResult : patternDoSResults) {
+            addSet(temp, doSResult);
+        }
+        for (DoSResult doSResult : forDoSResults) {
+            addSet(temp, doSResult);
+        }
+        for (DoSResult doSResult : mapDoSResults) {
+            addSet(temp, doSResult);
+        }
+        for (DoSResult doSResult : listDoSResults) {
+            addSet(temp, doSResult);
+        }
+        readExternalResults = new ArrayList<>(temp);
+    }
+
+    private static void addSet(Set<DoSResult> set, DoSResult doSResult) {
+        if (doSResult.getMethodReference().getName().equalsIgnoreCase("readExternal")) {
+            set.add(doSResult);
+        }
     }
 }
