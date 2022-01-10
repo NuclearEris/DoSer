@@ -7,11 +7,9 @@ import org.sec.core.Discovery;
 import org.sec.core.DoSFinder;
 import org.sec.core.LogFinder;
 import org.sec.core.dos.DoSUtil;
-import org.sec.core.dos.Output;
-import org.sec.model.ClassFile;
-import org.sec.model.ClassReference;
-import org.sec.model.DoSResult;
-import org.sec.model.MethodReference;
+import org.sec.core.dos.DoSOutputUtil;
+import org.sec.core.log.LogOutputUtil;
+import org.sec.model.*;
 import org.sec.util.RtUtil;
 
 import java.util.*;
@@ -71,11 +69,13 @@ public class Main {
             logger.info("analysis data...");
             readExternalResults = DoSUtil.addReadExternalResults(
                     arrayDoSResults, patternDoSResults, forDoSResults, mapDoSResults, listDoSResults);
-            Output.start(patternDoSResults, forDoSResults, arrayDoSResults,
+            DoSOutputUtil.start(patternDoSResults, forDoSResults, arrayDoSResults,
                     mapDoSResults, listDoSResults, readExternalResults);
         }
         if (command.module.equalsIgnoreCase("log")) {
-            LogFinder.start(classFileList, classMap, methodMap);
+            List<LogResult> logResults = new ArrayList<>();
+            LogFinder.start(classFileList, classMap, methodMap,logResults);
+            LogOutputUtil.start(logResults);
         }
         logger.info("delete temp files...");
     }

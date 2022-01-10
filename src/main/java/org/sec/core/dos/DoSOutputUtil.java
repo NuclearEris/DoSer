@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @SuppressWarnings("all")
-public class Output {
+public class DoSOutputUtil {
     public static void start(List<DoSResult> patternDoSResults,
                              List<DoSResult> forDoSResults,
                              List<DoSResult> arrayDoSResults,

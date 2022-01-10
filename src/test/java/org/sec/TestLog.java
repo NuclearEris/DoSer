@@ -11,7 +11,7 @@ public class TestLog {
         try{
             int i=1/0;
         }catch (Exception e){
-            logger.error("a '{}'",data);
+            logger.error(data);
         }
     }
 }
