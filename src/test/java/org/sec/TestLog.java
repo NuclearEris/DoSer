@@ -8,9 +8,9 @@ public class TestLog {
 
     public static void main(String[] args) {
         String data = "test";
-        try{
-            int i=1/0;
-        }catch (Exception e){
+        try {
+            int i = 1 / 0;
+        } catch (Exception e) {
             logger.error(data);
         }
     }

@@ -3,7 +3,6 @@ package org.sec.core;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
-import org.sec.core.dos.PatternDoSClassVisitor;
 import org.sec.core.log.Slf4jLogClassVisitor;
 import org.sec.model.ClassFile;
 import org.sec.model.ClassReference;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LogFinder {
-    private static final Logger logger = LogManager.getLogger(Logger.class);
+    private static final Logger logger = LogManager.getLogger(LogFinder.class);
 
     public static void start(List<ClassFile> classFileList,
                              Map<ClassReference.Handle, ClassReference> classMap,
