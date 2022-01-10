@@ -1,4 +1,4 @@
-package org.sec.core;
+package org.sec.core.dos;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

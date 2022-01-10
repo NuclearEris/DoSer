@@ -1,4 +1,4 @@
-package org.sec.core;
+package org.sec.core.dos;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;

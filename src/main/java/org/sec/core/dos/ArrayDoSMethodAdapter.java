@@ -1,8 +1,7 @@
-package org.sec.core;
+package org.sec.core.dos;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -12,34 +11,31 @@ import org.sec.model.ClassReference;
 import org.sec.model.DoSResult;
 import org.sec.model.MethodReference;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("all")
-public class ForDoSMethodAdapter extends CoreMethodAdapter<String> {
-    private static final Logger logger = LogManager.getLogger(ForDoSMethodAdapter.class);
+public class ArrayDoSMethodAdapter extends CoreMethodAdapter<String> {
+    private static final Logger logger = LogManager.getLogger(ArrayDoSMethodAdapter.class);
 
     private final ClassReference classReference;
     private final MethodReference methodReference;
-    private final List<DoSResult> forDoSResults;
+    private final List<DoSResult> arrayDoSResults;
     private final String owner;
     private final int access;
     private final String name;
     private final String desc;
-    private final List<Label> labelList = new ArrayList<>();
-    private boolean flag;
 
-    public ForDoSMethodAdapter(int api, MethodVisitor mv, String owner, int access,
-                               String name, String desc, String signature, String[] exceptions,
-                               Map<ClassReference.Handle, ClassReference> classMap,
-                               Map<MethodReference.Handle, MethodReference> methodMap,
-                               List<DoSResult> forDoSResults) {
+    public ArrayDoSMethodAdapter(int api, MethodVisitor mv, String owner, int access,
+                                 String name, String desc, String signature, String[] exceptions,
+                                 Map<ClassReference.Handle, ClassReference> classMap,
+                                 Map<MethodReference.Handle, MethodReference> methodMap,
+                                 List<DoSResult> arrayDoSResults) {
         super(api, mv, owner, access, name, desc, signature, exceptions);
         this.classReference = classMap.get(new ClassReference.Handle(owner));
         this.methodReference = methodMap.get(new MethodReference.Handle(
                 this.classReference.getHandle(), name, desc));
-        this.forDoSResults = forDoSResults;
+        this.arrayDoSResults = arrayDoSResults;
         this.owner = owner;
         this.access = access;
         this.name = name;
@@ -61,33 +57,32 @@ public class ForDoSMethodAdapter extends CoreMethodAdapter<String> {
     }
 
     @Override
-    public void visitLabel(Label label) {
-        this.labelList.add(label);
-        super.visitLabel(label);
+    public void visitIntInsn(int opcode, int operand) {
+        if (opcode == Opcodes.NEWARRAY) {
+            if (operandStack.get(0).contains("source")) {
+                if (Command.debug) {
+                    logger.info("find array dos: " + this.owner + "." + this.name);
+                }
+                arrayDoSResults.add(new DoSResult(
+                        this.classReference, this.methodReference, DoSResult.ARRAY_TYPE));
+            }
+        }
+        super.visitIntInsn(opcode, operand);
     }
 
     @Override
-    public void visitJumpInsn(int opcode, Label label) {
-        if (opcode == Opcodes.GOTO) {
-            if (labelList.contains(label)) {
-                if (this.flag) {
-                    if (Command.debug) {
-                        logger.info("find for dos: " + this.owner + "." + this.name);
-                    }
-                    forDoSResults.add(new DoSResult(
-                            this.classReference, this.methodReference, DoSResult.FOR_TYPE));
-                    this.flag = false;
-                }
-            }
-        }
-        if (opcode == Opcodes.IF_ICMPGE) {
+    public void visitTypeInsn(int opcode, String type) {
+        if (opcode == Opcodes.ANEWARRAY) {
             if (operandStack.get(0).contains("source")) {
-                this.flag = true;
+                if (Command.debug) {
+                    logger.info("find array dos: " + this.owner + "." + this.name);
+                }
+                arrayDoSResults.add(new DoSResult(
+                        this.classReference, this.methodReference, DoSResult.ARRAY_TYPE));
             }
         }
-        super.visitJumpInsn(opcode, label);
+        super.visitTypeInsn(opcode, type);
     }
-
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {

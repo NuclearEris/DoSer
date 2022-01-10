@@ -1,4 +1,4 @@
-package org.sec.core;
+package org.sec.core.dos;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -11,20 +11,20 @@ import org.sec.model.MethodReference;
 import java.util.List;
 import java.util.Map;
 
-public class MapDoSClassVisitor extends ClassVisitor {
+public class ArrayDoSClassVisitor extends ClassVisitor {
     private final Map<ClassReference.Handle, ClassReference> classMap;
     private final Map<MethodReference.Handle, MethodReference> methodMap;
-    private final List<DoSResult> mapDoSResults;
+    private final List<DoSResult> arrayDoSResults;
 
     private String name;
 
-    public MapDoSClassVisitor(Map<ClassReference.Handle, ClassReference> classMap,
+    public ArrayDoSClassVisitor(Map<ClassReference.Handle, ClassReference> classMap,
                               Map<MethodReference.Handle, MethodReference> methodMap,
-                              List<DoSResult> mapDoSResults) {
+                              List<DoSResult> arrayDoSResults) {
         super(Opcodes.ASM6);
         this.classMap = classMap;
         this.methodMap = methodMap;
-        this.mapDoSResults = mapDoSResults;
+        this.arrayDoSResults = arrayDoSResults;
     }
 
     @Override
@@ -38,9 +38,9 @@ public class MapDoSClassVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc,
                                      String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        MapDoSMethodAdapter mapDoSMethodVisitor = new MapDoSMethodAdapter(
+        ArrayDoSMethodAdapter arrayDoSMethodVisitor = new ArrayDoSMethodAdapter(
                 api, mv, this.name, access, name, desc, signature, exceptions,
-                classMap, methodMap, mapDoSResults);
-        return new JSRInlinerAdapter(mapDoSMethodVisitor, access, name, desc, signature, exceptions);
+                classMap, methodMap, arrayDoSResults);
+        return new JSRInlinerAdapter(arrayDoSMethodVisitor, access, name, desc, signature, exceptions);
     }
 }

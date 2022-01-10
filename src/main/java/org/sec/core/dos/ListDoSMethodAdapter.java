@@ -1,4 +1,4 @@
-package org.sec.core;
+package org.sec.core.dos;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -15,27 +15,27 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("all")
-public class ArrayDoSMethodAdapter extends CoreMethodAdapter<String> {
-    private static final Logger logger = LogManager.getLogger(ArrayDoSMethodAdapter.class);
+public class ListDoSMethodAdapter extends CoreMethodAdapter<String> {
+    private static final Logger logger = LogManager.getLogger(ListDoSMethodAdapter.class);
 
     private final ClassReference classReference;
     private final MethodReference methodReference;
-    private final List<DoSResult> arrayDoSResults;
+    private final List<DoSResult> listDoSResults;
     private final String owner;
     private final int access;
     private final String name;
     private final String desc;
 
-    public ArrayDoSMethodAdapter(int api, MethodVisitor mv, String owner, int access,
-                                 String name, String desc, String signature, String[] exceptions,
-                                 Map<ClassReference.Handle, ClassReference> classMap,
-                                 Map<MethodReference.Handle, MethodReference> methodMap,
-                                 List<DoSResult> arrayDoSResults) {
+    public ListDoSMethodAdapter(int api, MethodVisitor mv, String owner, int access,
+                                String name, String desc, String signature, String[] exceptions,
+                                Map<ClassReference.Handle, ClassReference> classMap,
+                                Map<MethodReference.Handle, MethodReference> methodMap,
+                                List<DoSResult> listDoSResults) {
         super(api, mv, owner, access, name, desc, signature, exceptions);
         this.classReference = classMap.get(new ClassReference.Handle(owner));
         this.methodReference = methodMap.get(new MethodReference.Handle(
                 this.classReference.getHandle(), name, desc));
-        this.arrayDoSResults = arrayDoSResults;
+        this.listDoSResults = listDoSResults;
         this.owner = owner;
         this.access = access;
         this.name = name;
@@ -57,35 +57,22 @@ public class ArrayDoSMethodAdapter extends CoreMethodAdapter<String> {
     }
 
     @Override
-    public void visitIntInsn(int opcode, int operand) {
-        if (opcode == Opcodes.NEWARRAY) {
-            if (operandStack.get(0).contains("source")) {
-                if (Command.debug) {
-                    logger.info("find array dos: " + this.owner + "." + this.name);
-                }
-                arrayDoSResults.add(new DoSResult(
-                        this.classReference, this.methodReference, DoSResult.ARRAY_TYPE));
-            }
-        }
-        super.visitIntInsn(opcode, operand);
-    }
-
-    @Override
-    public void visitTypeInsn(int opcode, String type) {
-        if (opcode == Opcodes.ANEWARRAY) {
-            if (operandStack.get(0).contains("source")) {
-                if (Command.debug) {
-                    logger.info("find array dos: " + this.owner + "." + this.name);
-                }
-                arrayDoSResults.add(new DoSResult(
-                        this.classReference, this.methodReference, DoSResult.ARRAY_TYPE));
-            }
-        }
-        super.visitTypeInsn(opcode, type);
-    }
-
-    @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+        boolean listInit = (opcode == Opcodes.INVOKESPECIAL) &&
+                (owner.equals("java/util/ArrayList")) &&
+                (name.equals("<init>")) &&
+                (desc.equals("(I)V"));
+        if (listInit) {
+            if (operandStack.get(0).contains("source")) {
+                if (Command.debug) {
+                    logger.info("find list dos: " + this.owner + "." + this.name);
+                }
+                listDoSResults.add(new DoSResult(
+                        this.classReference, this.methodReference, DoSResult.LIST_TYPE));
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
+                return;
+            }
+        }
         Type[] argTypes = Type.getArgumentTypes(desc);
         if (opcode != Opcodes.INVOKESTATIC) {
             Type[] extendedArgTypes = new Type[argTypes.length + 1];

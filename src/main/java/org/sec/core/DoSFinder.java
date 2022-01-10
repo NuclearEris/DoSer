@@ -3,6 +3,7 @@ package org.sec.core;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
+import org.sec.core.dos.*;
 import org.sec.model.ClassFile;
 import org.sec.model.ClassReference;
 import org.sec.model.DoSResult;

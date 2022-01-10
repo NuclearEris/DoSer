@@ -1,4 +1,4 @@
-package org.sec.core;
+package org.sec.core.dos;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -11,20 +11,20 @@ import org.sec.model.MethodReference;
 import java.util.List;
 import java.util.Map;
 
-public class PatternDoSClassVisitor extends ClassVisitor {
+public class ForDoSClassVisitor extends ClassVisitor {
     private final Map<ClassReference.Handle, ClassReference> classMap;
     private final Map<MethodReference.Handle, MethodReference> methodMap;
-    private final List<DoSResult> patternDoSResults;
+    private final List<DoSResult> forDoSResults;
 
     private String name;
 
-    public PatternDoSClassVisitor(Map<ClassReference.Handle, ClassReference> classMap,
-                                  Map<MethodReference.Handle, MethodReference> methodMap,
-                                  List<DoSResult> patternDoSResults) {
+    public ForDoSClassVisitor(Map<ClassReference.Handle, ClassReference> classMap,
+                              Map<MethodReference.Handle, MethodReference> methodMap,
+                              List<DoSResult> forDoSResults) {
         super(Opcodes.ASM6);
         this.classMap = classMap;
         this.methodMap = methodMap;
-        this.patternDoSResults = patternDoSResults;
+        this.forDoSResults = forDoSResults;
     }
 
     @Override
@@ -38,9 +38,9 @@ public class PatternDoSClassVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc,
                                      String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        PatternDoSMethodAdapter patternDoSMethodVisitor = new PatternDoSMethodAdapter(
+        ForDoSMethodAdapter forDoSMethodVisitor = new ForDoSMethodAdapter(
                 api, mv, this.name, access, name, desc, signature, exceptions,
-                classMap, methodMap, patternDoSResults);
-        return new JSRInlinerAdapter(patternDoSMethodVisitor, access, name, desc, signature, exceptions);
+                classMap, methodMap, forDoSResults);
+        return new JSRInlinerAdapter(forDoSMethodVisitor, access, name, desc, signature, exceptions);
     }
 }

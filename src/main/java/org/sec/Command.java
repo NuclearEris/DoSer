@@ -11,6 +11,9 @@ public class Command {
     @Parameter(description = "Scan Jar File")
     public List<String> jars;
 
+    @Parameter(names = {"-m", "--module"}, description = "Use Module")
+    public String module;
+
     @Parameter(names = {"--debug"}, description = "Debug")
     public boolean isDebug;
 
