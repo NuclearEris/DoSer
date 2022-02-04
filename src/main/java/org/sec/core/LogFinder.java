@@ -3,7 +3,7 @@ package org.sec.core;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
-import org.sec.core.log.Slf4jLogClassVisitor;
+import org.sec.core.log.LogClassVisitor;
 import org.sec.model.ClassFile;
 import org.sec.model.ClassReference;
 import org.sec.model.LogResult;
@@ -22,9 +22,9 @@ public class LogFinder {
         logger.info("start log inject analysis");
         for (ClassFile file : classFileList) {
             try {
-                Slf4jLogClassVisitor scv = new Slf4jLogClassVisitor(classMap, methodMap, logResults);
+                LogClassVisitor lcv = new LogClassVisitor(classMap, methodMap, logResults);
                 ClassReader cr = new ClassReader(file.getFile());
-                cr.accept(scv, ClassReader.EXPAND_FRAMES);
+                cr.accept(lcv, ClassReader.EXPAND_FRAMES);
             } catch (Exception e) {
                 e.printStackTrace();
             }

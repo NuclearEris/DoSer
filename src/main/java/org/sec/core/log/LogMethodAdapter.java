@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("all")
-public class Slf4jLogMethodAdapter extends CoreMethodAdapter<String> {
-    private static final Logger logger = LogManager.getLogger(Slf4jLogMethodAdapter.class);
+public class LogMethodAdapter extends CoreMethodAdapter<String> {
+    private static final Logger logger = LogManager.getLogger(LogMethodAdapter.class);
 
     private final ClassReference classReference;
     private final MethodReference methodReference;
@@ -26,11 +26,11 @@ public class Slf4jLogMethodAdapter extends CoreMethodAdapter<String> {
     private final String name;
     private final String desc;
 
-    public Slf4jLogMethodAdapter(int api, MethodVisitor mv, String owner, int access,
-                                 String name, String desc, String signature, String[] exceptions,
-                                 Map<ClassReference.Handle, ClassReference> classMap,
-                                 Map<MethodReference.Handle, MethodReference> methodMap,
-                                 List<LogResult> logResults) {
+    public LogMethodAdapter(int api, MethodVisitor mv, String owner, int access,
+                            String name, String desc, String signature, String[] exceptions,
+                            Map<ClassReference.Handle, ClassReference> classMap,
+                            Map<MethodReference.Handle, MethodReference> methodMap,
+                            List<LogResult> logResults) {
         super(api, mv, owner, access, name, desc, signature, exceptions);
         this.classReference = classMap.get(new ClassReference.Handle(owner));
         this.methodReference = methodMap.get(new MethodReference.Handle(
@@ -58,12 +58,19 @@ public class Slf4jLogMethodAdapter extends CoreMethodAdapter<String> {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        boolean patternMatches = (opcode == Opcodes.INVOKEINTERFACE) &&
+        // org.slf4j.Logger
+        boolean slf4jMatches = (opcode == Opcodes.INVOKEINTERFACE) &&
                 (owner.equals("org/slf4j/Logger")) &&
-                ((name.equals("error")) || name.equals("warn")) &&
+                ((name.equals("error")) || name.equals("warn") || name.equals("info")) &&
                 ((desc.equals("(Ljava/lang/String;Ljava/lang/Object;)V")) ||
                         desc.equals("(Ljava/lang/String;)V"));
-        if (patternMatches) {
+        //org.apache.juli.logging.Log;
+        boolean tomcatMatches = owner.equals("org/apache/juli/logging/Log") &&
+                ((name.equals("error")) || name.equals("warn") || name.equals("info"));
+        //org.apache.dubbo.common.logger.Logger
+        boolean dubboMatches = owner.equals("org/apache/dubbo/common/logger/Logger") &&
+                ((name.equals("error")) || name.equals("warn") || name.equals("info"));
+        if (slf4jMatches || tomcatMatches) {
             if (operandStack.get(0).contains("source")) {
                 if (Command.debug) {
                     logger.info("find log inject: " + this.owner + "." + this.name);

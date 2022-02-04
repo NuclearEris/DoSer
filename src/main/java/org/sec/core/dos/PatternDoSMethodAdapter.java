@@ -62,7 +62,11 @@ public class PatternDoSMethodAdapter extends CoreMethodAdapter<String> {
                 (owner.equals("java/util/regex/Pattern")) &&
                 (name.equals("matches")) &&
                 (desc.equals("(Ljava/lang/String;Ljava/lang/CharSequence;)Z"));
-        if (patternMatches) {
+        boolean validataDoS = (opcode == Opcodes.INVOKESTATIC) &&
+                (owner.equals("org/apache/commons/lang3/Validate")) &&
+                (name.equals("matchesPattern")) &&
+                (desc.equals("(Ljava/lang/CharSequence;Ljava/lang/String;)V"));
+        if (patternMatches || validataDoS) {
             if (operandStack.get(0).contains("source") &&
                     operandStack.get(1).contains("source")) {
                 if (Command.debug) {
@@ -73,6 +77,12 @@ public class PatternDoSMethodAdapter extends CoreMethodAdapter<String> {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
                 return;
             }
+        }
+        if (validataDoS) {
+            patternDoSResults.add(new DoSResult(
+                    this.classReference, this.methodReference, DoSResult.PATTERN_TYPE));
+            super.visitMethodInsn(opcode, owner, name, desc, itf);
+            return;
         }
         Type[] argTypes = Type.getArgumentTypes(desc);
         if (opcode != Opcodes.INVOKESTATIC) {
