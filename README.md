@@ -1,6 +1,6 @@
 # DoSer
 
-鸡肋DoS水洞半自动检测工具
+鸡肋洞半自动检测工具
 
 参考：https://xz.aliyun.com/t/10925
 
