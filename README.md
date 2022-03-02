@@ -2,6 +2,8 @@
 
 鸡肋DoS水洞半自动检测工具
 
+参考：https://xz.aliyun.com/t/10925
+
 ## 成果
 
 - Apache Dubbo 拒绝服务漏洞（能复现有危害，官方不修复因为影响性能）
