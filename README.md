@@ -16,5 +16,6 @@
 - Alibaba Druid 拒绝服务漏洞（触发条件较高，能复现有危害，官方不认）
 - Apache Shiro 日志注入漏洞（官方认可，但认为该漏洞应该报告给Log4j）
 - Apache Hadoop 日志注入漏洞（官方认可，但由于危害过低不给CVE）
-- Apache Log4j 日志注入漏洞（官方认为这不是漏洞，而是一种功能的改进）
+- Apache Log4j2 日志注入漏洞（官方认为这不是漏洞，而是一种功能的改进）
 - Apache Tomcat 日志注入漏洞（官方认为这不是漏洞，而是一种功能的改进）
+- Apache ActiveMQ/Apache Kafka/Apache Commons/...（不回复）
