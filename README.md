@@ -4,6 +4,12 @@
 
 参考：https://xz.aliyun.com/t/10925
 
+基本使用：`java -jar xxx.jar 目标JAR -m 模块名`
+
+示例：`java -jar xxx.jar target.jar -m dos`
+
+结果显示在对应的`txt`中
+
 ## 成果
 
 - Apache Dubbo 拒绝服务漏洞（能复现有危害，官方不修复因为影响性能）
